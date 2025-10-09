@@ -1,0 +1,41 @@
+{
+  "name": "@excalidraw/db",
+  "version": "1.0.0",
+  "description": "Shared database schema and Prisma Client for the monorepo.",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "postinstall": "prisma generate",
+    "generate": "prisma generate",
+    "build": "tsc -b",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "@repo/typescript-config": "workspace:*",
+    "prisma": "latest",
+    "typescript": "^5.0.0"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.js",
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./client": {
+      "require": "./node_modules/@prisma/client/index.js",
+      "import": "./node_modules/@prisma/client/index.js"
+    }
+  }
+}

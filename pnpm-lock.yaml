@@ -20,9 +20,6 @@ importers:
 
   apps/http-backend:
     dependencies:
-      '@prisma/client':
-        specifier: 6.17.0
-        version: 6.17.0(prisma@6.17.0(typescript@5.9.2))(typescript@5.9.2)
       '@types/bcrypt':
         specifier: ^6.0.0
         version: 6.0.0
@@ -32,6 +29,9 @@ importers:
       '@types/jsonwebtoken':
         specifier: ^9.0.10
         version: 9.0.10
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
       bcrypt:
         specifier: ^6.0.0
         version: 6.0.0
@@ -48,6 +48,9 @@ importers:
         specifier: ^4.1.12
         version: 4.1.12
     devDependencies:
+      '@excalidraw/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -57,9 +60,6 @@ importers:
       express:
         specifier: ^5.1.0
         version: 5.1.0
-      prisma:
-        specifier: ^6.17.0
-        version: 6.17.0(typescript@5.9.2)
 
   apps/web:
     dependencies:
@@ -110,6 +110,25 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
+
+  packages/db:
+    dependencies:
+      '@prisma/client':
+        specifier: latest
+        version: 6.17.0(prisma@6.17.0(typescript@5.9.2))(typescript@5.9.2)
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      prisma:
+        specifier: latest
+        version: 6.17.0(typescript@5.9.2)
+      typescript:
+        specifier: ^5.0.0
+        version: 5.9.2
 
   packages/eslint-config:
     devDependencies:

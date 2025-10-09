@@ -1,9 +1,9 @@
 // User Signup controller logic
-import { z, ZodError } from "zod";
+import { z } from "zod";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import prisma from "../prisma/prisma.js";
+import {prisma} from "@excalidraw/db";
 
 
 export const signUpController = async  (req: Request, res: Response)=>{

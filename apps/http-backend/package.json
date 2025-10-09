@@ -11,22 +11,19 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@excalidraw/db": "workspace:*",
     "@types/express": "^5.0.3",
-    "express": "^5.1.0",
-    "prisma": "^6.17.0"
-  },
-  "prisma": {
-    "schema": "src/prisma/schema.prisma"
+    "express": "^5.1.0"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "@prisma/client": "6.17.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.15.3",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
