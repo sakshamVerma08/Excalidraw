@@ -5,7 +5,7 @@ declare global{
 
 
     interface User{
-        id: string,
+        id: string | undefined,
         name: string,
         email: string,
         password:string,

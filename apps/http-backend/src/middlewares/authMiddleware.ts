@@ -19,7 +19,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction)=
         email: decodedToken.email
     }
 
-    console.log("\n\r\nAttatched user id = ", decodedToken.id, "\n");
+    console.log("\n\r\nAttatched user id = ", decodedToken.sub, "\n");
 
     next();
 

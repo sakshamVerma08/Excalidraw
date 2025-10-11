@@ -114,7 +114,7 @@ export const signInController = async(req: Request, res: Response)=>{
 
     const {email,password} = validationResult.data;
 
-    let existingUser : User | null;
+    let existingUser;
     try{
 
         existingUser = await prisma.user.findFirst({
@@ -178,14 +178,16 @@ export const createRoom = async (req: Request, res: Response)=>{
     const {slug} = validationResult.data;
 
     const userId = req.user?.id;
+    console.log("\n\r\nUser ID = ", userId, "\n\r\n");
     if(!userId) return res.status(401).json({message:"Unauthenticated User"});
-
     const adminId = parseInt(userId);
 
     await prisma.room.create({
         data:{
             admin:{
-                connect:{id:userId}
+                connect:{
+                    id:adminId
+                }
             },
             slug: slug
         }
