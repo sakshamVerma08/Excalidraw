@@ -1,8 +1,12 @@
 import dotenv from "dotenv";
-const loadedVariables = dotenv.config({path:"../../../.env"});
-
-
-if(loadedVariables.parsed) console.info("Environment variables loaded successfully");
+import path from "path";
+const loadedVariables = dotenv.config({
+    path: path.join(process.cwd(),"../../.env")
+});
+const currentPath = path.join(process.cwd(),"../../.env");
+console.log("\nPath = ", currentPath);
+console.log("Loaded variables:", loadedVariables.parsed);
+console.log("JWT_SECRET value:", process.env.JWT_SECRET);
 
 import {WebSocketServer, WebSocket} from "ws";
 import express  from "express";
@@ -11,7 +15,6 @@ import jwt from "jsonwebtoken";
 import http, { IncomingMessage } from "http";
 
 /* Creating a common http server that handles ws handshakes, and during that , inside the http server, the jwt token is verified. */
-
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -26,15 +29,25 @@ console.log("=== Incoming Upgrade Request ===");
     const token = cookies.token;
 
 
+
     if(!token){
         socket.write("HTTP/1.1 401 Unauthorized \r\n\r\n");
+        console.info("\nDestroying the socket. 401 Unauthorized\n\n");
         socket.destroy();
         return;
     }
 
 
     try{
-        const user = jwt.verify(token, process.env.JWT_SECRET!);
+
+        if(typeof (process.env.JWT_SECRET) === 'undefined'){
+            console.error("\n\r\nJWT SECRET IS MISSING ❌\n\r\n");
+            socket.write("HTTP/1.1 500 Internal Server Error\r\n\r\nMissing JWT_SECRET on server");
+            socket.destroy();
+            return;
+        }
+
+        const user= jwt.verify(token, process.env.JWT_SECRET!);
         wss.handleUpgrade(req,socket,head,(ws)=>{
             (ws as any).user = user;
 
