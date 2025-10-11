@@ -12,6 +12,7 @@ const signUpSchema = z.object({
     name: z.string().min(3),
     email: z.string().min(3),
     password: z.string().min(5),
+    photo: z.string().min(5)
 
 });
     /*
@@ -29,7 +30,7 @@ const signUpSchema = z.object({
         return res.status(400).json(validationResult.error);
     }
 
-    const {name,email,password} = validationResult.data;
+    const {name,email,password,photo} = validationResult.data;
 
     try{
         
@@ -58,6 +59,7 @@ const signUpSchema = z.object({
             name,
             email,
             password: hashedPassword,
+            photo
 
         }
     });
