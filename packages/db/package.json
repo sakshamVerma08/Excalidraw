@@ -13,10 +13,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "generate": "prisma generate",
-    "build": "tsc -b",
-    "migrate:dev": "prisma migrate dev",
-    "migrate:deploy": "prisma migrate deploy",
-    "studio": "prisma studio"
+    "build": "tsc -b"
   },
   "dependencies": {
     "@prisma/client": "latest"

@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "npm run build && npm run start",
     "start": "node ./dist/index.js",
-    "build": "tsc -b",
-    "clean": "rm -rf dist"
+    "build": "tsc",
+    "clean": "rm -rf dist node_modules/.cache"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

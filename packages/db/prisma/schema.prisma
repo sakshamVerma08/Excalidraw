@@ -9,14 +9,14 @@ datasource db {
 }
 
 model user {
-  id         Int    @id @default(autoincrement())
-  name       String @db.VarChar(50)
-  email      String @unique @db.VarChar(60)
-  password   String @unique @db.VarChar(256)
-  photo      String
-  rooms      Room[] @relation("Room_participants") // Every user can be in multiple rooms
+  id         Int     @id @default(autoincrement())
+  name       String  @db.VarChar(50)
+  email      String  @unique @db.VarChar(60)
+  password   String  @unique @db.VarChar(256)
+  photo      String?
+  rooms      Room[]  @relation("Room_participants") // Every user can be in multiple rooms
   chat       Chat[] // Every user can have an array of chat messages
-  adminRooms Room[] @relation("RoomAdmin") // One user can be admin in multiple rooms
+  adminRooms Room[]  @relation("RoomAdmin") // One user can be admin in multiple rooms
 }
 
 model Room {

@@ -1,20 +1,14 @@
 // User Signup controller logic
-import { z } from "zod";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import {prisma} from "@excalidraw/db";
+import { CreateRoomSchema, loginSchema, signUpSchema } from "../types/schemas.js";
 
 
 export const signUpController = async  (req: Request, res: Response)=>{
     
-const signUpSchema = z.object({
-    name: z.string().min(3),
-    email: z.string().min(3),
-    password: z.string().min(5),
-    photo: z.string().min(5)
 
-});
     /*
     1. Use zod validations to validate the request body fields properly, then extract them from the req.body.
     2. Check if the existing User exists in the DB or not.
@@ -52,7 +46,7 @@ const signUpSchema = z.object({
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password,saltRounds);
     
-    let createdUser: User;
+    let createdUser;
     try{
         createdUser = await prisma.user.create({
         data:{
@@ -62,6 +56,11 @@ const signUpSchema = z.object({
             photo
 
         }
+    });
+
+
+    const token = jwt.sign({sub:String(createdUser.id), email: createdUser.email, name: createdUser.name}, process.env.JWT_SECRET!,{
+        expiresIn: "5d"
     });
 
 
@@ -97,13 +96,6 @@ const signUpSchema = z.object({
  
 export const signInController = async(req: Request, res: Response)=>{
 
-
-const loginSchema = z.object({
-
-    email: z.string().min(3),
-    password: z.string().min(5)
-}
-);
 
     /*
     1. Validate request body
@@ -177,6 +169,33 @@ const loginSchema = z.object({
 
 export const createRoom = async (req: Request, res: Response)=>{
 
-    const userDetails = req.user;
-    return res.status(201).json({userDetails});
+    try{
+
+    const validationResult = CreateRoomSchema.safeParse(req.body);
+
+    if(!validationResult.success) return res.status(400).json({message:"Error while validating fields"});
+
+    const {slug} = validationResult.data;
+
+    const userId = req.user?.id;
+    if(!userId) return res.status(401).json({message:"Unauthenticated User"});
+
+    const adminId = parseInt(userId);
+
+    await prisma.room.create({
+        data:{
+            admin:{
+                connect:{id:userId}
+            },
+            slug: slug
+        }
+    });
+
+    return res.status(201).json({message:"New room created successfully"});
+
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).json({message:"Internal Server Error"});
+    }
 }

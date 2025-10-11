@@ -3,10 +3,6 @@ import path from "path";
 const loadedVariables = dotenv.config({
     path: path.join(process.cwd(),"../../.env")
 });
-const currentPath = path.join(process.cwd(),"../../.env");
-console.log("\nPath = ", currentPath);
-console.log("Loaded variables:", loadedVariables.parsed);
-console.log("JWT_SECRET value:", process.env.JWT_SECRET);
 
 import {WebSocketServer, WebSocket} from "ws";
 import express  from "express";
@@ -69,6 +65,7 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 
     ws.on('message', function message(data){
 
+        console.log("Received from client: ", data);
         ws.send('pong');
     });
 });

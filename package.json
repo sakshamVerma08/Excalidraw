@@ -1,5 +1,8 @@
 {
   "name": "Excalidraw",
+  "prisma": {
+    "schema": "packages/db/prisma/schema.prisma"
+  },
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -8,7 +11,8 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
     "migrate:dev": "pnpm prisma migrate dev --schema packages/db/prisma/schema.prisma",
-    "migrate:reset": "pnpm prisma migrate reset --schema packages/db/prisma/schema.prisma"
+    "migrate:reset": "pnpm prisma migrate reset --schema packages/db/prisma/schema.prisma",
+    "studio": "prisma studio schema"
   },
   "devDependencies": {
     "prettier": "^3.6.2",

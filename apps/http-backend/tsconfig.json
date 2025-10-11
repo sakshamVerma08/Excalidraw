@@ -2,11 +2,17 @@
 
     "extends":"@repo/typescript-config/base.json",
     "compilerOptions":{
-
-        "rootDir":"./src",
+        "rootDir":"src",
         "outDir":"./dist",
+        "module":"esnext",
+        "moduleResolution":"bundler",
+        "target": "es2022",
+        "verbatimModuleSyntax": false, // Set to false to strip type imports
+        "noEmit":false,
+        "allowImportingTsExtensions": false
         
         
     },
-    "include":["src"]
+    "include":["src/**/*"],
+    "exclude":["node_modules","dist"]
 }

@@ -1,10 +1,11 @@
 import { JwtPayload } from "jsonwebtoken";
 
+
 declare global{
 
 
     interface User{
-        id: number,
+        id: string,
         name: string,
         email: string,
         password:string,
@@ -14,15 +15,13 @@ declare global{
 
         interface UserToken extends JwtPayload{
 
-            id: number,
+            id: string ,
             name: string,
             email: string,
         }
     }
 
     namespace Express{
-        
-
         
         interface Request{
 
@@ -36,5 +35,6 @@ declare global{
 
     
 }
+
 
 export {};
