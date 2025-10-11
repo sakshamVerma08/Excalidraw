@@ -1,8 +1,11 @@
+import dotenv from "dotenv";
+const loadedVariables = dotenv.config({path:"../../.env"});
+
+if(loadedVariables.parsed) console.info("env variables loaded successfully \n\n");
+
 import express, { Request, Response} from "express";
 import cookieParser from "cookie-parser";
 import router from "./routerMiddlewares/userRouter.js";
-import dotenv from "dotenv";
-dotenv.config({path:"./.env"});
 const app = express();
 const PORT = 4000;
 // Using application level middlewares.

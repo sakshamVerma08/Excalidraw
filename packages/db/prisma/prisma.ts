@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+/*import { PrismaClient } from '@prisma/client';
 
 // PrismaClient is attached to the `globalThis` object in development
 // to prevent exhausting database connections due to hot reloading
@@ -16,4 +16,4 @@ if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
 }
 
-export default prisma;
+export default prisma;*/
