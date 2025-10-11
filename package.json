@@ -7,8 +7,8 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "migrate:dev": "pnpm run  prisma migrate dev --schema packages/db/prisma/schema.prisma",
-    "migrate:reset": "pnpm run prisma migreate reset --schema packages/db/prisma/schema.prisma"
+    "migrate:dev": "pnpm prisma migrate dev --schema packages/db/prisma/schema.prisma",
+    "migrate:reset": "pnpm prisma migrate reset --schema packages/db/prisma/schema.prisma"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
