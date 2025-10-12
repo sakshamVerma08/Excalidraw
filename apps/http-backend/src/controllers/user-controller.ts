@@ -64,6 +64,17 @@ export const signUpController = async  (req: Request, res: Response)=>{
     });
 
 
+    res.cookie('token', token,{
+        httpOnly:true,
+        secure:true,
+        sameSite:'strict',
+        
+    });
+
+
+    return res.status(200).json({message:"User signup successful"});
+
+
     
 }catch(err){
     console.error(err);
@@ -178,7 +189,6 @@ export const createRoom = async (req: Request, res: Response)=>{
     const {slug} = validationResult.data;
 
     const userId = req.user?.id;
-    console.log("\n\r\nUser ID = ", userId, "\n\r\n");
     if(!userId) return res.status(401).json({message:"Unauthenticated User"});
     const adminId = parseInt(userId);
 
