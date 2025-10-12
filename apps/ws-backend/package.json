@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@excalidraw/types": "workspace:*",
     "tsx": "^4.20.6"
   },
   "keywords": [],

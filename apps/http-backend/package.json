@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npm run build && npm run start",
     "start": "node ./dist/index.js",
-    "build": "tsc",
+    "build": "tsc -b --watch",
     "clean": "rm -rf dist node_modules/.cache",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
@@ -17,6 +17,7 @@
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-typescript": "^7.27.1",
     "@excalidraw/db": "workspace:*",
+    "@excalidraw/types": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/express": "^5.0.3",
     "@types/jest": "^30.0.0",

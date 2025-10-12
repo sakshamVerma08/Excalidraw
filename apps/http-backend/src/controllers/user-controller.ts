@@ -3,8 +3,7 @@ import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import {prisma} from "@excalidraw/db";
-import { CreateRoomSchema, loginSchema, signUpSchema } from "../types/schemas.js";
-
+import {loginSchema, signUpSchema, CreateRoomSchema} from "@excalidraw/types";
 
 export const signUpController = async  (req: Request, res: Response)=>{
     
@@ -33,7 +32,7 @@ export const signUpController = async  (req: Request, res: Response)=>{
     });
 
 
-        if(!dbResponse==null) return res.status(400).json({message:"User already exists with same email"})
+        if(dbResponse !== null) return res.status(400).json({message:"User already exists with same email"})
 
 
         }
@@ -81,32 +80,10 @@ export const signUpController = async  (req: Request, res: Response)=>{
     return res.status(500).json({message: "Error while inserting entry to DB"});
 }
 
-
-    const jwtPayload : JwtPayload = {
-        sub: createdUser.id.toString(),
-        email: createdUser.email,
-        name: createdUser.name,
-    }
-
-    const token  = jwt.sign(jwtPayload , process.env.JWT_SECRET!, {
-        expiresIn: '1d'
-    });
-
-    res.cookie("token",token,{
-        httpOnly:true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-    });
-
-
-    return res.status(201).json({message:"Signup Successful"});
-
 }
 
  
 export const signInController = async(req: Request, res: Response)=>{
-
 
     /*
     1. Validate request body
@@ -188,7 +165,7 @@ export const createRoom = async (req: Request, res: Response)=>{
 
     const {slug} = validationResult.data;
 
-    const userId = req.user?.id;
+        const userId = req.user?.id;
     if(!userId) return res.status(401).json({message:"Unauthenticated User"});
     const adminId = parseInt(userId);
 

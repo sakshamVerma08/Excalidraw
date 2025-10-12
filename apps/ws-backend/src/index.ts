@@ -59,6 +59,8 @@ console.log("=== Incoming Upgrade Request ===");
 );
 
 
+const users : User[];
+
 // WebSocket Server Code 
 wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 

@@ -6,7 +6,7 @@ jest.mock('@excalidraw/db', ()=>({
 
 import request from 'supertest';
 import express from 'express';
-import { signUpController, signInController } from '../controllers/user-controller';
+import { signUpController, signInController } from '../controllers/user-controller.js';
 import cookieParser from 'cookie-parser';
 import './mocks/prisma'; // Import mock
 import prisma from '@excalidraw/db';
