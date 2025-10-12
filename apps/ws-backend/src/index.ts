@@ -58,6 +58,8 @@ console.log("=== Incoming Upgrade Request ===");
 
 );
 
+
+// WebSocket Server Code 
 wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 
 
@@ -73,4 +75,4 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 
 httpServer.listen(8080,()=>{
     console.log("httpServer active on http://localhost:8080");
-})
+});
