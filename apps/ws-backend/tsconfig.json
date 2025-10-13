@@ -2,8 +2,22 @@
 
     "extends":"@repo/typescript-config/base.json",
     "compilerOptions":{
+        "rootDir":"src",
+        "outDir":"dist",
+        "composite":true,
+        "paths":{
+            "@excalidraw/types": ["../../packages/types/src/*"]
+        },
+        "typeRoots":[
+            "../../packages/type/src",
+            "./node_modules/@excalidraw/src/express.d.ts"
+        ]
+    },
 
-        "rootDir":"./src",
-        "outDir":"./dist"
-    }
+    "references": [
+        {"path":"../../packages/types"}
+    ]
+
+    
+    
 }

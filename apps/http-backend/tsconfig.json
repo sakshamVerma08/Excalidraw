@@ -2,8 +2,8 @@
     "extends":"@repo/typescript-config/base.json",
     "compilerOptions": {
         // Build output configuration
-        "rootDir": "./src",
-        "outDir": "./dist",
+        "rootDir": "src",
+        "outDir": "dist",
         "composite": true,
         
         // Proper ES module configuration for Node.js runtime

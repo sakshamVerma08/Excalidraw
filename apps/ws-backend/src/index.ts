@@ -1,14 +1,22 @@
 import dotenv from "dotenv";
 import path from "path";
+
 const loadedVariables = dotenv.config({
     path: path.join(process.cwd(),"../../.env")
 });
 
 import {WebSocketServer, WebSocket} from "ws";
-import express  from "express";
+import express, { Request }  from "express";
 import * as cookie from "cookie";
 import jwt from "jsonwebtoken";
 import http, { IncomingMessage } from "http";
+
+interface User{
+        id: string | undefined ,
+        name: string,
+        email: string,
+        password:string,
+    }
 
 /* Creating a common http server that handles ws handshakes, and during that , inside the http server, the jwt token is verified. */
 const app = express();
@@ -59,7 +67,7 @@ console.log("=== Incoming Upgrade Request ===");
 );
 
 
-const users : User[];
+const users : User[] = [];
 
 // WebSocket Server Code 
 wss.on('connection', function connection(ws: WebSocket & {user?:any}){

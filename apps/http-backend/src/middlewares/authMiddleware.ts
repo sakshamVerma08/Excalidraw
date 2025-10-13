@@ -14,7 +14,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction)=
 
 
     req.user = {
-        id: decodedToken.sub,
+        id: decodedToken.sub as string,
         name: decodedToken.name,
         email: decodedToken.email
     }
