@@ -10,10 +10,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -b --watch"
-  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "typescript": "^5.0.0"

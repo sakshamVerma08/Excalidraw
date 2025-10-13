@@ -79,12 +79,13 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
     ws.on('message', async function message(data){
 
         const parsedData = JSON.parse(data as unknown as string);
+        const userId : number = parseInt(ws.user.sub); 
         
 
         if(parsedData.type==="join_room"){
 
             // Logic for Join_room message
-        // Message from client: {type: "join_room",roomId: 1}
+        // Message from client: {type: "join_room",slug: "chat-room-1"}
         /*
         1. First check in DB if the room even exists or not. If it doens't then close the socket connection & return, else continue.
         2. In the DB, update the current room's "roomParticipants" field to store current user's id.
@@ -92,11 +93,12 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
         */
             
                 try {
-                    await prisma.$transaction(async (tx) => {
+                    await prisma.$transaction(
+                        async (tx) => {
                         // 1. Check if the room exists
                         const currentRoom = await tx.room.findFirst({
                         where: {
-                            id: parsedData.roomId
+                            slug: parsedData.slug
                         }
                         });
 
@@ -108,11 +110,11 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                         // 2. Add the userId to room's participants list
                         await tx.room.update({
                         where: {
-                            id: currentRoom.id
+                            slug: currentRoom.slug
                         },
                         data: {
                             roomParticipants: {
-                            connect: { id: ws.user.sub }
+                            connect: { id: userId }
                             }
                         }
                         });
@@ -120,7 +122,7 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                         // 3. Add the room's id to user's joinedRooms list
                         await tx.user.update({
                         where: {
-                            id: ws.user.sub
+                            id: userId
                         },
                         data: {
                             rooms: {
@@ -130,7 +132,13 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                             }
                         }
                         });
-                    });
+                    },
+                {
+                    maxWait: 5000,
+                    timeout: 10000
+                });
+
+                ws.send(JSON.stringify({status:"✅successfully joined the room "}));
         } catch (err) {
         console.error("❌Error while joining the room\n\r\n");
         console.error(err);
@@ -151,28 +159,29 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 
             try{
 
-                await prisma.$transaction(async(tx)=>{
+                await prisma.$transaction(
+                    async(tx)=>{
 
                 // Removing the current user's id from 'roomParticipant' list.
                 await prisma.room.update({
                     where:{
-                        id: parsedData.roomId
+                        slug: parsedData.slug
                     },
 
                     data:{
                         roomParticipants:{
                             delete:{
-                                id: ws.user.sub
+                                id: userId
                             }
                         }
                     }
                 });
 
-
+                // Update the same on the user's table , in his 'rooms' list
                 await prisma.user.update({
 
                     where:{
-                        id: ws.user.sub
+                        id: userId
                     },
 
                     data:{
@@ -184,12 +193,17 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                     }
                 })
 
+            },{
+                maxWait: 5000,
+                timeout: 10000
             });
+
+            ws.send(JSON.stringify({status:"✅successfully left the room"}));
 
             }catch(err){
                 console.error("❌Error while leaving the room \n\r\n");
                 console.error(err);
-                ws.send("❌Error while leaving the room \n\r\n");
+                ws.send(JSON.stringify({error: err,message:"❌Error while leaving the room \n\r\n"}) );
                 ws.close();
                 return;
             }
@@ -205,12 +219,12 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
             3. Broadcast the message to all the users in the current Room.
             */
 
-            const room = await prisma.room.findFirst({
+            const room = await prisma.room.findUnique({
                 where:{
-                    id: parsedData.roomId,
+                    slug: parsedData.slug,
                     roomParticipants:{
                         some:{
-                            id: ws.user.sub
+                            id: userId
                         }
                     }
                 },
@@ -228,7 +242,7 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
             // Saving the message in the "Message" table.
             const message = await prisma.message.create({
                 data:{
-                    userId: ws.user.sub,
+                    userId: userId,
                     roomId: parsedData.roomId,
                     message: parsedData.message,
                     created_at: new Date()
