@@ -76,7 +76,8 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 
     console.log("Authenticated User ✅\n");
 
-    ws.on('message', async function message(data){
+    ws.on('message', 
+        async function message(data){
 
         const parsedData = JSON.parse(data as unknown as string);
         const userId : number = parseInt(ws.user.sub); 
@@ -170,9 +171,9 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 
                     data:{
                         roomParticipants:{
-                            delete:{
+                            disconnect:[{
                                 id: userId
-                            }
+                            }]
                         }
                     }
                 });
@@ -186,9 +187,9 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 
                     data:{
                         rooms:{
-                            delete:{
-                                id: parsedData.roomId
-                            }
+                            disconnect:[{
+                                slug: parsedData.slug
+                            }]
                         }
                     }
                 })
@@ -205,9 +206,9 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                 console.error(err);
                 ws.send(JSON.stringify({error: err,message:"❌Error while leaving the room \n\r\n"}) );
                 ws.close();
-                return;
             }
-
+            
+            return;
         }
 
         if(parsedData.type==="chat"){

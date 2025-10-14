@@ -31,7 +31,7 @@
     // Include source files and test config
     "include": [
         "./src/**/*", 
-        "./jest.config.cjs"
+        "jest.config.ts"
     ],
     
     "exclude": ["node_modules", "dist"],

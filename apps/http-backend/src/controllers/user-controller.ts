@@ -19,8 +19,9 @@ export const signUpController = async  (req: Request, res: Response)=>{
 
 
     const validationResult = signUpSchema.safeParse(req.body);
+
     if(!validationResult.success){
-        return res.status(400).json(validationResult.error);
+        return res.status(400).json(validationResult.error.issues);
     }
 
     const {name,email,password,photo} = validationResult.data;
@@ -97,7 +98,7 @@ export const signInController = async(req: Request, res: Response)=>{
 
     const validationResult = loginSchema.safeParse(req.body);
 
-    if(!validationResult.success) return res.status(400).json({message:"Fields validation failed"});
+    if(!validationResult.success) return res.status(400).json({error: validationResult.error.issues});
 
 
     const {email,password} = validationResult.data;
@@ -161,11 +162,11 @@ export const createRoom = async (req: Request, res: Response)=>{
 
     const validationResult = CreateRoomSchema.safeParse(req.body);
 
-    if(!validationResult.success) return res.status(400).json({message:"Error while validating fields"});
+    if(!validationResult.success) return res.status(400).json({error: validationResult.error.issues});
 
     const {slug} = validationResult.data;
 
-        const userId = req.user?.id;
+    const userId = req.user?.id;
     if(!userId) return res.status(401).json({message:"Unauthenticated User"});
     const adminId = parseInt(userId);
 
