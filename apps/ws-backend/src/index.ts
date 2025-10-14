@@ -68,7 +68,6 @@ console.log("=== Incoming Upgrade Request ===");
 );
 
 
-const users : User[] = [];
 
 // WebSocket Server Code 
 wss.on('connection', function connection(ws: WebSocket & {user?:any}){
@@ -164,7 +163,7 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                     async(tx)=>{
 
                 // Removing the current user's id from 'roomParticipant' list.
-                await prisma.room.update({
+                await tx.room.update({
                     where:{
                         slug: parsedData.slug
                     },
@@ -179,7 +178,7 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                 });
 
                 // Update the same on the user's table , in his 'rooms' list
-                await prisma.user.update({
+                await tx.user.update({
 
                     where:{
                         id: userId
@@ -244,7 +243,6 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
             const message = await prisma.message.create({
                 data:{
                     userId: userId,
-                    roomId: parsedData.roomId,
                     message: parsedData.message,
                     created_at: new Date()
                     
