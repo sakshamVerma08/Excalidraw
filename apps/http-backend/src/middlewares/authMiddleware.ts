@@ -14,10 +14,12 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction)=
 
 
     req.user = {
-        id: decodedToken.id,
+        id: decodedToken.sub as string,
         name: decodedToken.name,
         email: decodedToken.email
     }
+
+    console.log("\n\r\nAttatched user id = ", decodedToken.sub, "\n");
 
     next();
 

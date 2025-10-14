@@ -3,10 +3,10 @@ const loadedVariables = dotenv.config({path:"../../.env"});
 
 if(loadedVariables.parsed) console.info("env variables loaded successfully \n\n");
 
-import express, { Request, Response} from "express";
+import express, {Express, Request, Response} from "express";
 import cookieParser from "cookie-parser";
 import router from "./routerMiddlewares/userRouter.js";
-const app = express();
+const app: Express = express();
 const PORT = 4000;
 // Using application level middlewares.
 
@@ -25,7 +25,15 @@ app.get("/", (req: Request,res: Response)=>{
 });
 
 
-app.listen(PORT,()=>{
-    console.log(`HTTP server is live at http://localhost:${PORT}`);
-});
+// Test route for Supertest/Jest code.
+app.get("/health", (req: Request, res: Response)=>{
 
+    return res.status(200).json({message:"✅Server health looking good "});
+})
+
+
+ app.listen(PORT,()=>{
+     console.log(`HTTP server is live at http://localhost:${PORT}`);
+ });
+
+export default app;

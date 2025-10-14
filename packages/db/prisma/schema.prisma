@@ -9,31 +9,32 @@ datasource db {
 }
 
 model user {
-  id         Int    @id @default(autoincrement())
-  name       String @db.VarChar(50)
-  email      String @unique @db.VarChar(60)
-  password   String @unique @db.VarChar(256)
-  photo      String
-  rooms      Room[] @relation("Room_participants") // Every user can be in multiple rooms
-  chat       Chat[] // Every user can have an array of chat messages
-  adminRooms Room[] @relation("RoomAdmin") // One user can be admin in multiple rooms
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(50)
+  email      String    @unique @db.VarChar(60)
+  password   String    @unique @db.VarChar(256)
+  photo      String?
+  rooms      Room[]    @relation("Room_participants") // Every user can be in multiple rooms
+  chat       Message[] // Every user can have an array of chat messages
+  adminRooms Room[]    @relation("RoomAdmin") // One user can be admin in multiple rooms
 }
 
 model Room {
-  id               Int      @id @default(autoincrement())
-  slug             String   @unique
-  createdAt        DateTime @default(now())
-  roomParticipants user[]   @relation("Room_participants") // Every room can have multiple users
+  id               Int       @id @default(autoincrement())
+  slug             String    @unique
+  createdAt        DateTime  @default(now())
+  roomParticipants user[]    @relation("Room_participants") // Every room can have multiple users
   adminId          Int // This adminId is a Foreign Key that points to the 'user' id.
-  admin            user     @relation("RoomAdmin", fields: [adminId], references: [id]) // Every room has a single admin
-  chatMessages     Chat[]
+  admin            user      @relation("RoomAdmin", fields: [adminId], references: [id]) // Every room has a single admin
+  chatMessages     Message[]
 }
 
-model Chat {
-  id      Int    @id @default(autoincrement())
-  userId  Int
-  roomId  Int
-  message String
-  room    Room   @relation(fields: [roomId], references: [id]) // Every chat message belongs to a particular room.
-  user    user   @relation(fields: [userId], references: [id]) // Every chat message is associated with a single user.
+model Message {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  roomId     Int
+  message    String
+  room       Room     @relation(fields: [roomId], references: [id]) // Every chat message belongs to a particular room.
+  user       user     @relation(fields: [userId], references: [id]) // Every chat message is associated with a single user.
+  created_at DateTime @default(now())
 }

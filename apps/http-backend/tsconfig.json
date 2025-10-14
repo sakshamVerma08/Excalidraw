@@ -1,12 +1,43 @@
 {
-
     "extends":"@repo/typescript-config/base.json",
-    "compilerOptions":{
-
-        "rootDir":"./src",
-        "outDir":"./dist",
+    "compilerOptions": {
+        // Build output configuration
+        "rootDir": "./src",
+        "outDir": "./dist",
+        "composite": true,
         
+        // Proper ES module configuration for Node.js runtime
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
         
+        "target": "es2022",
+        
+        // Allow stripping type-only imports for cleaner output
+        "verbatimModuleSyntax": false,
+        
+        // Enable emit since we need to build the project
+        "noEmit": false,
+        
+        // Not needed with nodenext and proper package resolution
+        "allowImportingTsExtensions": false,
+        
+        // Ensures interop with CommonJS modules
+        "esModuleInterop": true,
+        
+        // Speeds up compilation
+        "skipLibCheck": true
     },
-    "include":["src"]
+    
+    // Include source files and test config
+    "include": [
+        "./src/**/*"
+    ],
+    
+    "exclude": ["node_modules", "dist"],
+    
+    // Reference shared packages
+    "references": [
+        { "path": "../../packages/types" },
+        { "path": "../../packages/db" }
+    ]
 }

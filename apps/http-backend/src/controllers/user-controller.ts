@@ -1,19 +1,13 @@
 // User Signup controller logic
-import { z } from "zod";
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import {prisma} from "@excalidraw/db";
-
+import {loginSchema, signUpSchema, CreateRoomSchema} from "@excalidraw/types";
 
 export const signUpController = async  (req: Request, res: Response)=>{
     
-const signUpSchema = z.object({
-    name: z.string().min(3),
-    email: z.string().min(3),
-    password: z.string().min(5),
 
-});
     /*
     1. Use zod validations to validate the request body fields properly, then extract them from the req.body.
     2. Check if the existing User exists in the DB or not.
@@ -25,11 +19,12 @@ const signUpSchema = z.object({
 
 
     const validationResult = signUpSchema.safeParse(req.body);
+
     if(!validationResult.success){
-        return res.status(400).json(validationResult.error);
+        return res.status(400).json(validationResult.error.issues);
     }
 
-    const {name,email,password} = validationResult.data;
+    const {name,email,password,photo} = validationResult.data;
 
     try{
         
@@ -38,7 +33,7 @@ const signUpSchema = z.object({
     });
 
 
-        if(!dbResponse==null) return res.status(400).json({message:"User already exists with same email"})
+        if(dbResponse !== null) return res.status(400).json({message:"User already exists with same email"})
 
 
         }
@@ -51,16 +46,33 @@ const signUpSchema = z.object({
     const saltRounds = 12;
     const hashedPassword = await bcrypt.hash(password,saltRounds);
     
-    let createdUser: User;
+    let createdUser;
     try{
         createdUser = await prisma.user.create({
         data:{
             name,
             email,
             password: hashedPassword,
+            photo
 
         }
     });
+
+
+    const token = jwt.sign({sub:String(createdUser.id), email: createdUser.email, name: createdUser.name}, process.env.JWT_SECRET!,{
+        expiresIn: "5d"
+    });
+
+
+    res.cookie('token', token,{
+        httpOnly:true,
+        secure:true,
+        sameSite:'strict',
+        
+    });
+
+
+    return res.status(200).json({message:"User signup successful"});
 
 
     
@@ -69,39 +81,10 @@ const signUpSchema = z.object({
     return res.status(500).json({message: "Error while inserting entry to DB"});
 }
 
-
-    const jwtPayload : JwtPayload = {
-        sub: createdUser.id.toString(),
-        email: createdUser.email,
-        name: createdUser.name,
-    }
-
-    const token  = jwt.sign(jwtPayload , process.env.JWT_SECRET!, {
-        expiresIn: '1d'
-    });
-
-    res.cookie("token",token,{
-        httpOnly:true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 7 * 24 * 60 * 60 * 1000
-    });
-
-
-    return res.status(201).json({message:"Signup Successful"});
-
 }
 
  
 export const signInController = async(req: Request, res: Response)=>{
-
-
-const loginSchema = z.object({
-
-    email: z.string().min(3),
-    password: z.string().min(5)
-}
-);
 
     /*
     1. Validate request body
@@ -115,12 +98,12 @@ const loginSchema = z.object({
 
     const validationResult = loginSchema.safeParse(req.body);
 
-    if(!validationResult.success) return res.status(400).json({message:"Fields validation failed"});
+    if(!validationResult.success) return res.status(400).json({error: validationResult.error.issues});
 
 
     const {email,password} = validationResult.data;
 
-    let existingUser : User | null;
+    let existingUser;
     try{
 
         existingUser = await prisma.user.findFirst({
@@ -175,6 +158,34 @@ const loginSchema = z.object({
 
 export const createRoom = async (req: Request, res: Response)=>{
 
-    const userDetails = req.user;
-    return res.status(201).json({userDetails});
+    try{
+
+    const validationResult = CreateRoomSchema.safeParse(req.body);
+
+    if(!validationResult.success) return res.status(400).json({error: validationResult.error.issues});
+
+    const {slug} = validationResult.data;
+
+    const userId = req.user?.id;
+    if(!userId) return res.status(401).json({message:"Unauthenticated User"});
+    const adminId = parseInt(userId);
+
+    await prisma.room.create({
+        data:{
+            admin:{
+                connect:{
+                    id:adminId
+                }
+            },
+            slug: slug
+        }
+    });
+
+    return res.status(201).json({message:"New room created successfully"});
+
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).json({message:"Internal Server Error"});
+    }
 }
