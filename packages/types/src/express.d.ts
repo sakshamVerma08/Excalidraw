@@ -4,13 +4,6 @@ import { JwtPayload } from "jsonwebtoken";
 declare global{
 
 
-     interface User{
-        id: string | undefined ,
-        name: string,
-        email: string,
-        password:string,
-    }
-
     namespace JWT{
 
         interface UserToken extends JwtPayload{

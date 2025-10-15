@@ -35,3 +35,19 @@ export const loginSchema = z.object({
     .min(minPasswordLength, `Password must be ${minPasswordLength} characters long`)
 }
 );
+
+
+  export  type Message = {
+         userId: number,
+         roomId: number,
+         message: string,
+         created_at: Date,
+     }
+
+
+     export type User = {
+        id: string | undefined ,
+        name: string,
+        email: string,
+        password:string,
+    }
