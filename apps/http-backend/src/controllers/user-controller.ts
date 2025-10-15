@@ -21,7 +21,7 @@ export const signUpController = async  (req: Request, res: Response)=>{
     const validationResult = signUpSchema.safeParse(req.body);
 
     if(!validationResult.success){
-        return res.status(400).json(validationResult.error.issues);
+        return res.status(400).json({error:validationResult.error.issues});
     }
 
     const {name,email,password,photo} = validationResult.data;

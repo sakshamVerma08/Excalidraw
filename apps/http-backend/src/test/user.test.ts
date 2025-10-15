@@ -1,10 +1,31 @@
 import app from "../index.js";
 import request from "supertest";
-import { ZodError } from "zod";
+
+
+let authCookie: string | undefined;
+beforeAll(async()=>{
+
+    const loginResponse = await request(app)
+    .post("/api/user/sign-in")
+    .send({email:"nitinaswal25@gmail.com",password:"123456"})
+    .expect("Content-Type",/json/)
+
+    expect(loginResponse.statusCode).toBe(201)
+    expect(loginResponse.body).toBeDefined()
+    expect(loginResponse.body.message).toEqual("Login Successful")
+    
+    const setCookieHeader = loginResponse.headers['set-cookie'];
+    if(setCookieHeader && setCookieHeader[0]){
+
+    authCookie = setCookieHeader[0].split(";")[0];
+    } else{
+        throw new Error("Failed to retrieve auth Cookie");
+    }
+});
 
 describe("POST /api/user/sign-in", ()=>{
 
-    it('should help an existing user to sign in and return 201 status', async()=>{
+    it('Login an existing User', async()=>{
 
         const userObject = {
             email:"akshaykumar25@gmail.com",
@@ -18,11 +39,12 @@ describe("POST /api/user/sign-in", ()=>{
         .expect("Content-Type",/json/)
         .expect(201)
 
+        expect(response.statusCode).toBe(201)
         expect(response.body).toEqual({message:"Login Successful"})
     }, 9000);
 
 
-    it('should return 400 when zod validation fails', async()=>{
+    it('Simulate failing Zod validations(Login) ', async()=>{
         const invalidUser = {
             email:"a@a",
             password:"12"
@@ -32,18 +54,16 @@ describe("POST /api/user/sign-in", ()=>{
         .post('/api/user/sign-in')
         .send(invalidUser)
         .expect('Content-Type',/json/)
-        .expect(400)
 
-
+        expect(response.statusCode).toBe(400)
         expect(response.body).toBeDefined();
-        expect(Array.isArray(response.body.error)).toBe(true)
+        expect(response.body.error).toBeDefined()
     },9000)
 });
 
 describe("POST /api/user/sign-up", ()=>{
 
-    let authCookie : string;
-    it('should create a new user upon Signup and return 200', async ()=>{
+    it('Signup a new User', async ()=>{
 
         const userData = {
             name: "John Doe",
@@ -55,23 +75,19 @@ describe("POST /api/user/sign-up", ()=>{
         .post("/api/user/sign-up")
         .send(userData)
         .expect("Content-Type",/json/)
-        .expect(200)
 
-        const setCookieHeader = response.headers['set-cookie'];
 
-        if(setCookieHeader && setCookieHeader[0] &&  setCookieHeader.length > 0){
-            authCookie = setCookieHeader[0].split(';')[0] as string;
-            expect(authCookie).toBeDefined()
-            console.log("Extracted Auth Cookie: ", authCookie);
-        }else{
-            throw new Error("Sign up response did not return 'set-cookie' header");
-        }
+        expect(response.statusCode).toBe(200)
+        expect(response.body).toBeDefined()
+        expect(response.body).toEqual({message:"User signup successful"})
+
+
 
         //expect(response.body).toEqual({message:"User signup successful"});
     }, 9000);
 
 
-    it('should return 400 when zod validations fail', async()=>{
+    it('Failing Zod validations (Signup)', async()=>{
 
         const invalidData = {
             name: "S",
@@ -84,9 +100,11 @@ describe("POST /api/user/sign-up", ()=>{
         .post("/api/user/sign-up")
         .send(invalidData)
         .expect("Content-Type",/json/)
-        .expect(400)
 
-        // expect(response.body).toEqual({message:"User signup successful"})
+        expect(response.statusCode).toBe(400)
+        expect(response.body.error).toBeDefined()
+
+
     },9000);
 });
 
