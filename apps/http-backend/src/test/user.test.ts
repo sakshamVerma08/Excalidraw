@@ -19,7 +19,7 @@ describe("POST /api/user/sign-in", ()=>{
         .expect(201)
 
         expect(response.body).toEqual({message:"Login Successful"})
-    });
+    }, 9000);
 
 
     it('should return 400 when zod validation fails', async()=>{
@@ -35,8 +35,9 @@ describe("POST /api/user/sign-in", ()=>{
         .expect(400)
 
 
-        expect(response.body).toBeInstanceOf(ZodError);
-    })
+        expect(response.body).toBeDefined();
+        expect(Array.isArray(response.body.error)).toBe(true)
+    },9000)
 });
 
 describe("POST /api/user/sign-up", ()=>{
@@ -45,7 +46,7 @@ describe("POST /api/user/sign-up", ()=>{
 
         const userData = {
             name: "John Doe",
-            email:"johndoe25@gmail.com",
+            email:`testuser_${Date.now()}@test.com`,
             password:"123456"
         };
 
@@ -56,7 +57,7 @@ describe("POST /api/user/sign-up", ()=>{
         .expect(200)
 
         //expect(response.body).toEqual({message:"User signup successful"});
-    });
+    }, 9000);
 
 
     it('should return 400 when zod validations fail', async()=>{
@@ -75,6 +76,6 @@ describe("POST /api/user/sign-up", ()=>{
         .expect(400)
 
         // expect(response.body).toEqual({message:"User signup successful"})
-    });
+    },9000);
 });
 

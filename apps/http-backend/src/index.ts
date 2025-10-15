@@ -6,6 +6,7 @@ if(loadedVariables.parsed) console.info("env variables loaded successfully \n\n"
 import express, {Express, Request, Response} from "express";
 import cookieParser from "cookie-parser";
 import router from "./routerMiddlewares/userRouter.js";
+import roomRouter from "./routerMiddlewares/roomRouter.js";
 const app: Express = express();
 const PORT = 4000;
 // Using application level middlewares.
@@ -17,7 +18,7 @@ app.use(cookieParser());
 // Using Router level middlewares
 
 app.use("/api/user", router);
-
+app.use("/api/room", roomRouter);
 
 app.get("/", (req: Request,res: Response)=>{
 
