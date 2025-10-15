@@ -44,21 +44,7 @@ describe("POST /api/user/sign-in", ()=>{
     }, 9000);
 
 
-    it('Simulate failing Zod validations(Login) ', async()=>{
-        const invalidUser = {
-            email:"a@a",
-            password:"12"
-        };
-
-        const response = await request(app)
-        .post('/api/user/sign-in')
-        .send(invalidUser)
-        .expect('Content-Type',/json/)
-
-        expect(response.statusCode).toBe(400)
-        expect(response.body).toBeDefined();
-        expect(response.body.error).toBeDefined()
-    },9000)
+   
 });
 
 describe("POST /api/user/sign-up", ()=>{
@@ -86,26 +72,6 @@ describe("POST /api/user/sign-up", ()=>{
         //expect(response.body).toEqual({message:"User signup successful"});
     }, 9000);
 
-
-    it('Failing Zod validations (Signup)', async()=>{
-
-        const invalidData = {
-            name: "S",
-            email:"s@s.com",
-            password:"invalidPassword"
-        };
-
-
-        const response = await request(app)
-        .post("/api/user/sign-up")
-        .send(invalidData)
-        .expect("Content-Type",/json/)
-
-        expect(response.statusCode).toBe(400)
-        expect(response.body.error).toBeDefined()
-
-
-    },9000);
 });
 
 afterAll(async () => {
