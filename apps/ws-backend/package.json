@@ -6,9 +6,8 @@
   "scripts": {
     "dev": "npm run build && npm run start",
     "start": "node ./dist/index.js",
-    "build": "tsc -b",
-    "dev:debug": "tsx watch --inspect src/index.ts",
-    "clean": "rm -rf dist"
+    "build": "rm -rf dist && tsc -b",
+    "dev:debug": "tsx watch --inspect src/index.ts"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

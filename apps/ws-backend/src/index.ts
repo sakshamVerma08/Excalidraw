@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path, { parse } from "path";
 import {prisma} from "@excalidraw/db";
-
+import type { User, Message } from '@excalidraw/types';
 const loadedVariables = dotenv.config({
     path: path.join(process.cwd(),"../../.env")
 });
@@ -11,13 +11,6 @@ import express, { Request }  from "express";
 import * as cookie from "cookie";
 import jwt from "jsonwebtoken";
 import http, { IncomingMessage } from "http";
-
-interface User{
-        id: string | undefined ,
-        name: string,
-        email: string,
-        password:string,
-    }
 
 /* Creating a common http server that handles ws handshakes, and during that , inside the http server, the jwt token is verified. */
 const app = express();
@@ -219,7 +212,12 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
             3. Broadcast the message to all the users in the current Room.
             */
 
-            const room = await prisma.room.findUnique({
+
+
+            const result: any  = await prisma.$transaction(
+                async (tx)=>{
+
+                const room = await tx.room.findFirst({
                 where:{
                     slug: parsedData.slug,
                     roomParticipants:{
@@ -229,7 +227,7 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                     }
                 },
                 include:{
-                    roomParticipants: true
+                    roomParticipants: true,
                 }
             });
 
@@ -240,8 +238,9 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
             }
 
             // Saving the message in the "Message" table.
-            const message = await prisma.message.create({
+            const message = await tx.message.create({
                 data:{
+                    roomId: room.id,
                     userId: userId,
                     message: parsedData.message,
                     created_at: new Date()
@@ -258,17 +257,20 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                 }
             });
 
-            if(!message){
-                ws.send("❌Couldn't save the message in DB");
-                ws.close();
-                return;
-            }
 
-            wss.clients.forEach((client)=>{
+            return {message, participants: room.roomParticipants};
+
+            }, {
+                maxWait: 5000,
+                timeout: 10000
+            });
+
+            
+             wss.clients.forEach((client)=>{
                 const wsClient = client as WebSocket & {user?:any};
 
                 // Checking if client is authenticated and a participant of the current room.
-                if(wsClient.readyState===WebSocket.OPEN && wsClient.user && room.roomParticipants.some(p=> p.id === wsClient.user.sub)){
+                if(wsClient.readyState===WebSocket.OPEN && wsClient.user && result.participants.some( (p:User)=> p.id === wsClient.user.sub)){
                     wsClient.send(JSON.stringify(message));
                 }
             });
