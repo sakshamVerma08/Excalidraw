@@ -9,7 +9,7 @@
     "build": "tsc -b",
     "build:watch": "tsc -b --watch",
     "clean": "rm -rf dist node_modules/.cache ./tsconfig.tsbuildinfo ",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles",
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage"
   },

@@ -33,8 +33,8 @@ app.get("/health", (req: Request, res: Response)=>{
 })
 
 
- app.listen(PORT,()=>{
-     console.log(`HTTP server is live at http://localhost:${PORT}`);
- });
+//  app.listen(PORT,()=>{
+//      console.log(`HTTP server is live at http://localhost:${PORT}`);
+//  });
 
 export default app;

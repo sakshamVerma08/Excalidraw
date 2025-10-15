@@ -1,5 +1,5 @@
-import request from "supertest";
 import app from "../index.js";
+import request from "supertest";
 import { ZodError } from "zod";
 
 describe("POST /api/user/sign-in", ()=>{
@@ -42,11 +42,12 @@ describe("POST /api/user/sign-in", ()=>{
 
 describe("POST /api/user/sign-up", ()=>{
 
+    let authCookie : string;
     it('should create a new user upon Signup and return 200', async ()=>{
 
         const userData = {
             name: "John Doe",
-            email:`testuser_${Date.now()}@test.com`,
+            email:`testUser_${Math.random()}@gmail.com`,
             password:"123456"
         };
 
@@ -55,6 +56,16 @@ describe("POST /api/user/sign-up", ()=>{
         .send(userData)
         .expect("Content-Type",/json/)
         .expect(200)
+
+        const setCookieHeader = response.headers['set-cookie'];
+
+        if(setCookieHeader && setCookieHeader[0] &&  setCookieHeader.length > 0){
+            authCookie = setCookieHeader[0].split(';')[0] as string;
+            expect(authCookie).toBeDefined()
+            console.log("Extracted Auth Cookie: ", authCookie);
+        }else{
+            throw new Error("Sign up response did not return 'set-cookie' header");
+        }
 
         //expect(response.body).toEqual({message:"User signup successful"});
     }, 9000);
@@ -79,3 +90,6 @@ describe("POST /api/user/sign-up", ()=>{
     },9000);
 });
 
+afterAll(async () => {
+  await new Promise(resolve => setTimeout(resolve, 500)); // let pending async ops finish
+});

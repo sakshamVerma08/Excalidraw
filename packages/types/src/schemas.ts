@@ -74,3 +74,9 @@ export type ChatTransactionResult = {
     photo: string | null;
   }>;
 };
+
+
+export const GetRoomsRouteParams = z.object({
+  roomId: z.string("Room ID must be a in query params")
+
+})
