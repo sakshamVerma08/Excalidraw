@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "npm run clean && npm run build && npm run start",
+    "clean": "rm -rf dist node_modules/.cache ./tsconfig.tsbuildinfo",
     "start": "node ./dist/app.js",
     "build": "rm -rf dist node_modules/.cache ./tsconfig.tsbuildinfo && tsc -b",
     "build:watch": "tsc -b --watch",

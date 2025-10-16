@@ -5,18 +5,43 @@ import { getAuthCookie } from "./helper/auth.js";
 let authCookie: string;
 beforeAll(async()=>{
     authCookie = await getAuthCookie();
-})
-describe('Get room Data', ()=>{
+});
 
-    it('POST /api/room/:roomId', async()=>{
+
+describe('Excalidraw Room Tests', ()=>{
+
+    
+    it('GET /api/room/', async()=>{
 
         const response = await request(app)
         .get("/api/room")
         .set("Cookie",authCookie)
+        .query({roomId: 3})
         .expect("Content-Type",/json/)
 
         expect(response.statusCode).toBe(200)
         expect(response.body).toBeDefined()
         
-    },9000);
-})
+    },5000);
+
+
+    it("(CREATE new room) POST /api/room/", async()=>{
+
+        const newRoomData = {
+            slug: "test-room",
+            userId: 2
+        };
+
+        const response = await request(app)
+        .post("/api/room/")
+        .set("Cookie", authCookie)
+        .send(newRoomData)
+        .expect("Content-Type",/json/)
+
+        expect(response.statusCode).toBe(201);
+        expect(response.body).toBeDefined();
+        expect(response.body).toEqual({message:"New room created successfully"});
+
+
+    })
+});
