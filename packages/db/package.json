@@ -13,7 +13,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "generate": "prisma generate",
-    "build": "tsc -b"
+    "build": "rm -rf dist && tsc -b"
   },
   "dependencies": {
     "@prisma/client": "latest"
