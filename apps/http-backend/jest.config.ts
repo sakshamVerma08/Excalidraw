@@ -6,12 +6,9 @@ const config: Config =  {
   roots: ["<rootDir>/src"],
   testMatch: ["**/__tests__/**/*.ts", "**/?(*.)+(spec|test).ts"],
  
-  globals:{
-    'ts-jest':{
-      useESM:true,
-      tsconfig:'tsconfig.json'
-    }
-  },
+ transform: {
+  "^.+\\.tsx?$": ["ts-jest", { tsconfig: "tsconfig.json" }]
+},
 
   extensionsToTreatAsEsm:[
     ".ts",

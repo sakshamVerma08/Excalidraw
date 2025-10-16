@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run build && npm run start",
-    "start": "node ./dist/index.js",
-    "build": "rm -rf dist && tsc -b",
+    "dev": "pnpm run build && pnpm run start",
+    "start": "node dist/index.js",
+    "build": "tsc -b --clean && tsc -b",
     "dev:debug": "tsx watch --inspect src/index.ts"
   },
   "devDependencies": {

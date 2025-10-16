@@ -51,3 +51,32 @@ export const loginSchema = z.object({
         email: string,
         password:string,
     }
+
+
+export type ChatTransactionResult = {
+  message: {
+    id: number;
+    roomId: number;
+    userId: number;
+    message: string;
+    created_at: Date;
+    user: {
+      id: number;
+      name: string;
+      email: string;
+    };
+  };
+  roomParticipants: Array<{
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    photo: string | null;
+  }>;
+};
+
+
+export const GetRoomsRouteParams = z.object({
+  roomId: z.string("Room ID must be a in query params")
+
+})
