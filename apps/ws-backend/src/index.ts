@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import path, { parse } from "path";
 import {prisma} from "@excalidraw/db";
-import type { User, Message } from '@excalidraw/types';
+import type { User, Message,  ChatTransactionResult} from '@excalidraw/types';
 const loadedVariables = dotenv.config({
     path: path.join(process.cwd(),"../../.env")
 });
@@ -144,7 +144,7 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
 
         if(parsedData.type==="leave_room"){
             // Logic for leaving a room 
-            // Message from client: {type: "leave_room", roomId: 2}
+            // Message from client: {type: "leave_room", slug: roomName}
             /*
             1. Find the user, and remove the current room id from his/her 'joinedRooms' list.
             2. From the currentRoom's 'roomParticipants' list, remove the user's id.
@@ -197,85 +197,117 @@ wss.on('connection', function connection(ws: WebSocket & {user?:any}){
                 console.error("❌Error while leaving the room \n\r\n");
                 console.error(err);
                 ws.send(JSON.stringify({error: err,message:"❌Error while leaving the room \n\r\n"}) );
-                ws.close();
             }
             
             return;
         }
 
         if(parsedData.type==="chat"){
-            // Logic for sending a chat message
-            // Message body : {type:"chat", roomId: 123, message:"Hello Everyone!"}
-            /*
-            1. Check whether the room exists or not, and whether user is part of the room or not.
-            2. Create a new Chat message in the Message table.
-            3. Broadcast the message to all the users in the current Room.
-            */
 
+            try{
 
+                /* parsedData structure: {type: chat,
+                                            slug: roomName,
+                                            message: Hello everyone}
+                */
 
-            const result: any  = await prisma.$transaction(
-                async (tx)=>{
+                const slug = parsedData.slug;
+                const incomingMessage = parsedData.message;
 
-                const room = await tx.room.findFirst({
-                where:{
-                    slug: parsedData.slug,
-                    roomParticipants:{
-                        some:{
-                            id: userId
+                /*
+                1. Firstly, check if the room exists or not, and if the current user is part of that room or not.
+                2. Insert the message in the Message table and then send the message to all the authenticated users who are participants of the room.
+                */
+
+                const room = await prisma.room.findFirst({
+                        where:{
+                            slug: slug,
+                            roomParticipants:{
+                                some:{
+                                    id: userId
+                                }
+                            }
+                        },
+                        include:{
+                            roomParticipants:true
                         }
-                    }
-                },
-                include:{
-                    roomParticipants: true,
-                }
-            });
+                });
 
-            if(!room){
-                ws.send("❌Either the room doesn't exist or user is not a part of that room");
-                ws.close();
-                return;
+
+                if(!room){
+                    ws.send(JSON.stringify({message:"❌Room not found"}));
+                    return;
+                }
+
+
+                const result = await prisma.$transaction(async(tx)=>{
+
+                    // Storing the message in room.
+
+                    const storedMessage = await tx.message.create({
+                        data:{
+                            userId: userId,
+                            roomId: room.id,
+                            message: incomingMessage,
+                            created_at: new Date()
+                        }, 
+
+                        include:{
+                                user:{
+                                    select:{
+                                        id:true,
+                                        name: true,
+                                        email:true,
+                                        photo:true
+                                    }
+                                }
+
+                                
+                            }
+                    });
+
+                    return {message: storedMessage, roomParticipants: room.roomParticipants}
+                }, {
+                    maxWait: 5000,
+                    timeout: 10000
+                }) as ChatTransactionResult;
+
+                const participantsId = new Set(
+                    result.roomParticipants.map(p=>p.id.toString())
+                );
+
+                wss.clients.forEach((client)=>{
+
+                    const wsClient = client as WebSocket & {user?:any};
+
+                    // Check if the client is authenticated or not.
+                    if(wsClient.readyState===WebSocket.OPEN &&
+                        wsClient.user && 
+                        participantsId.has(wsClient.user.sub.toString())
+                    ){
+
+                        wsClient.send(JSON.stringify({
+                            type:"chat",
+                            data: result.message
+                        }));
+                    }
+    
+    
+                });
+
+                console.log("\nMessage broadcasted✅to all the connected clients\n");
+
+
+
+            }catch(err){
+                console.error("❌Error while sending the chat message");
+                ws.send(JSON.stringify({
+                    err: "❌Failed to send message"
+                }));
             }
 
-            // Saving the message in the "Message" table.
-            const message = await tx.message.create({
-                data:{
-                    roomId: room.id,
-                    userId: userId,
-                    message: parsedData.message,
-                    created_at: new Date()
-                    
-                },
-                include:{
-                    user:{
-                        select:{
-                            id: true,
-                            name:true,
-                            email:true
-                        }
-                    }
-                }
-            });
 
-
-            return {message, participants: room.roomParticipants};
-
-            }, {
-                maxWait: 5000,
-                timeout: 10000
-            });
-
-            
-             wss.clients.forEach((client)=>{
-                const wsClient = client as WebSocket & {user?:any};
-
-                // Checking if client is authenticated and a participant of the current room.
-                if(wsClient.readyState===WebSocket.OPEN && wsClient.user && result.participants.some( (p:User)=> p.id === wsClient.user.sub)){
-                    wsClient.send(JSON.stringify(message));
-                }
-            });
-
-
+            return;
         }
 
         console.log("Received from client: ", data);

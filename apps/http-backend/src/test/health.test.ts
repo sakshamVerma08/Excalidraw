@@ -26,3 +26,8 @@ describe('GET /health route',()=>{
 
     // it()
 });
+
+
+afterAll(async () => {
+  await new Promise(resolve => setTimeout(resolve, 500)); // let pending async ops finish
+});

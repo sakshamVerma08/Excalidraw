@@ -21,7 +21,7 @@ export const signUpController = async  (req: Request, res: Response)=>{
     const validationResult = signUpSchema.safeParse(req.body);
 
     if(!validationResult.success){
-        return res.status(400).json(validationResult.error.issues);
+        return res.status(400).json({error:validationResult.error.issues});
     }
 
     const {name,email,password,photo} = validationResult.data;
@@ -153,39 +153,4 @@ export const signInController = async(req: Request, res: Response)=>{
     return res.status(201).json({message:"Login Successful"});
 
 
-}
-
-
-export const createRoom = async (req: Request, res: Response)=>{
-
-    try{
-
-    const validationResult = CreateRoomSchema.safeParse(req.body);
-
-    if(!validationResult.success) return res.status(400).json({error: validationResult.error.issues});
-
-    const {slug} = validationResult.data;
-
-    const userId = req.user?.id;
-    if(!userId) return res.status(401).json({message:"Unauthenticated User"});
-    const adminId = parseInt(userId);
-
-    await prisma.room.create({
-        data:{
-            admin:{
-                connect:{
-                    id:adminId
-                }
-            },
-            slug: slug
-        }
-    });
-
-    return res.status(201).json({message:"New room created successfully"});
-
-
-    }catch(err){
-        console.error(err);
-        return res.status(500).json({message:"Internal Server Error"});
-    }
 }

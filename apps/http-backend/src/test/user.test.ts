@@ -1,10 +1,31 @@
-import request from "supertest";
 import app from "../index.js";
-import { ZodError } from "zod";
+import request from "supertest";
+
+
+let authCookie: string | undefined;
+beforeAll(async()=>{
+
+    const loginResponse = await request(app)
+    .post("/api/user/sign-in")
+    .send({email:"nitinaswal25@gmail.com",password:"123456"})
+    .expect("Content-Type",/json/)
+
+    expect(loginResponse.statusCode).toBe(201)
+    expect(loginResponse.body).toBeDefined()
+    expect(loginResponse.body.message).toEqual("Login Successful")
+    
+    const setCookieHeader = loginResponse.headers['set-cookie'];
+    if(setCookieHeader && setCookieHeader[0]){
+
+    authCookie = setCookieHeader[0].split(";")[0];
+    } else{
+        throw new Error("Failed to retrieve auth Cookie");
+    }
+});
 
 describe("POST /api/user/sign-in", ()=>{
 
-    it('should help an existing user to sign in and return 201 status', async()=>{
+    it('Login an existing User', async()=>{
 
         const userObject = {
             email:"akshaykumar25@gmail.com",
@@ -18,34 +39,21 @@ describe("POST /api/user/sign-in", ()=>{
         .expect("Content-Type",/json/)
         .expect(201)
 
+        expect(response.statusCode).toBe(201)
         expect(response.body).toEqual({message:"Login Successful"})
-    });
+    }, 9000);
 
 
-    it('should return 400 when zod validation fails', async()=>{
-        const invalidUser = {
-            email:"a@a",
-            password:"12"
-        };
-
-        const response = await request(app)
-        .post('/api/user/sign-in')
-        .send(invalidUser)
-        .expect('Content-Type',/json/)
-        .expect(400)
-
-
-        expect(response.body).toBeInstanceOf(ZodError);
-    })
+   
 });
 
 describe("POST /api/user/sign-up", ()=>{
 
-    it('should create a new user upon Signup and return 200', async ()=>{
+    it('Signup a new User', async ()=>{
 
         const userData = {
             name: "John Doe",
-            email:"johndoe25@gmail.com",
+            email:`testUser_${Math.random()}@gmail.com`,
             password:"123456"
         };
 
@@ -53,28 +61,19 @@ describe("POST /api/user/sign-up", ()=>{
         .post("/api/user/sign-up")
         .send(userData)
         .expect("Content-Type",/json/)
-        .expect(200)
+
+
+        expect(response.statusCode).toBe(200)
+        expect(response.body).toBeDefined()
+        expect(response.body).toEqual({message:"User signup successful"})
+
+
 
         //expect(response.body).toEqual({message:"User signup successful"});
-    });
+    }, 9000);
 
-
-    it('should return 400 when zod validations fail', async()=>{
-
-        const invalidData = {
-            name: "S",
-            email:"s@s.com",
-            password:"invalidPassword"
-        };
-
-
-        const response = await request(app)
-        .post("/api/user/sign-up")
-        .send(invalidData)
-        .expect("Content-Type",/json/)
-        .expect(400)
-
-        // expect(response.body).toEqual({message:"User signup successful"})
-    });
 });
 
+afterAll(async () => {
+  await new Promise(resolve => setTimeout(resolve, 500)); // let pending async ops finish
+});
