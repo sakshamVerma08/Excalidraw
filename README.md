@@ -1,135 +1,296 @@
-# Turborepo starter
+# Excalidraw Clone 🎨
 
-This Turborepo starter is maintained by the Turborepo core team.
+A real-time collaborative drawing application inspired by Excalidraw. This project is a learning exercise focused on understanding modern full-stack architecture, real-time communication, and monorepo management.
 
-## Using this example
+## 🚧 Project Status
 
-Run the following command:
+**Work In Progress** - Backend prototype complete, frontend development starting soon.
 
-```sh
-npx create-turbo@latest
-```
+## 🎯 Project Goals
 
-## What's inside?
+This is primarily a learning project aimed at mastering:
+- Monorepo architecture with Turborepo
+- Real-time WebSocket communication
+- Advanced TypeScript patterns
+- Database management with Prisma
+- Security best practices
+- Full-stack application development
 
-This Turborepo includes the following packages/apps:
+## 🏗️ Architecture
 
-### Apps and Packages
+### Turborepo Monorepo
+- **Shared Packages**: Global packages accessible across all apps
+- **Turbo Caching**: Optimized build times through intelligent caching
+- **Type Safety**: Global TypeScript definitions shared across workspace
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+### Tech Stack
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+**Backend:**
+- Node.js + Express
+- WebSocket (ws library)
+- Prisma ORM
+- PostgreSQL
+- JWT Authentication
 
-### Utilities
+**Frontend:** (Coming Soon)
+- NextJS 
+- TypeScript
+- Canvas API
 
-This Turborepo has some additional tools already setup for you:
+**DevOps:**
+- Turborepo
+- TypeScript
+- Docker (planned)
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+## ✨ Features Implemented
 
-### Build
+### Real-time Collaboration
+- [x] WebSocket server for persistent connections
+- [x] Room-based collaboration (join/leave rooms)
+- [x] Real-time shape and drawing data transport
+- [ ] Conflict resolution for simultaneous edits
 
-To build all apps and packages, run the following command:
+### Authentication & Security
+- [x] JWT token-based authentication
+- [x] HTTP server for WebSocket upgrade handshake
+- [x] Cookie security (HttpOnly, Secure flags)
+- [x] XSS protection
+- [x] CSRF protection
+- [ ] CORS configuration
 
-```
-cd my-turborepo
+### Database
+- [x] Prisma schema design
+- [x] Migration management
+- [x] User and Room models
+- [x] Many-to-many relationships for room participants
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+## 🔧 Key Learnings
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+### Turborepo & Monorepos
+- How turbo caching works under the hood
+- Creating and managing shared packages
+- Configuring pipeline tasks and dependencies
+- Optimizing build performance
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### TypeScript
+- Complex type definitions and generics
+- Global type declarations
+- Type safety across monorepo packages
+- Solving intricate type errors
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### WebSockets
+- Real-time bidirectional communication
+- Room-based architecture
+- State synchronization across clients
+- Connection lifecycle management
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+### Authentication over WebSockets
+- Challenge: WebSocket protocol doesn't support headers like HTTP
+- Solution: Use HTTP server for initial upgrade request
+  - Client sends JWT in cookie during HTTP handshake
+  - Server verifies JWT before upgrading to WebSocket
+  - Authenticated user attached to WebSocket connection
 
-### Develop
+### Prisma Migrations
+- Schema versioning and evolution
+- Generating and applying migrations
+- Handling schema changes in development vs production
+- Database relationship modeling
 
-To develop all apps and packages, run the following command:
+### Security
+- **XSS Prevention**: Sanitizing user inputs, HttpOnly cookies
+- **CSRF Protection**: Token-based validation
+- **Secure Cookies**: Secure flag for HTTPS-only transmission
+- **CORS**: (Upcoming) Cross-origin resource sharing policies
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## 📁 Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+excalidraw-clone/
+├── apps/
+│   ├── web/                 # Frontend React app (coming soon)
+│   └── ws-server/           # WebSocket server
+│       ├── src/
+│       │   ├── index.ts     # Server entry point
+│       │   └── handlers/    # WebSocket event handlers
+│       └── package.json
+├── packages/
+│   ├── db/                  # Shared Prisma client
+│   │   ├── prisma/
+│   │   │   └── schema.prisma
+│   │   └── index.ts
+│   ├── types/               # Shared TypeScript types
+│   └── config/              # Shared configurations
+├── turbo.json               # Turborepo configuration
+└── package.json             # Root package.json
 ```
 
-## Useful Links
+## 🚀 Getting Started
 
-Learn more about the power of Turborepo:
+### Prerequisites
+- Node.js (v18 or higher)
+- PostgreSQL
+- pnpm (recommended) or npm
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+### Installation
+
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/excalidraw-clone.git
+cd excalidraw-clone
+```
+
+2. Install dependencies
+```bash
+pnpm install
+```
+
+3. Set up environment variables
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+Required environment variables:
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/excalidraw"
+JWT_SECRET="your-super-secret-jwt-key"
+PORT=8080
+```
+
+4. Run Prisma migrations
+```bash
+pnpm db:migrate
+```
+
+5. Start the development server
+```bash
+pnpm dev
+```
+
+## 🧪 WebSocket API
+
+### Connection
+```javascript
+// Client connects with JWT in cookie
+const ws = new WebSocket('ws://localhost:8080');
+```
+
+### Events
+
+**Join Room**
+```json
+{
+  "type": "join_room",
+  "roomId": "room-uuid"
+}
+```
+
+**Leave Room**
+```json
+{
+  "type": "leave_room",
+  "roomId": "room-uuid"
+}
+```
+
+**Send Drawing Data** (Coming Soon)
+```json
+{
+  "type": "draw",
+  "roomId": "room-uuid",
+  "data": {
+    "shapes": [...],
+    "action": "add|update|delete"
+  }
+}
+```
+
+## 📊 Database Schema
+
+### User
+```prisma
+model User {
+  id       String   @id @default(uuid())
+  email    String   @unique
+  name     String
+  password String
+  photo    String?
+  rooms    Room[]   @relation("RoomParticipants")
+}
+```
+
+### Room
+```prisma
+model Room {
+  id               String   @id @default(uuid())
+  name             String
+  roomParticipants User[]   @relation("RoomParticipants")
+  createdAt        DateTime @default(now())
+}
+```
+
+## 🔮 Roadmap
+
+- [ ] Frontend canvas implementation
+- [ ] Shape rendering and manipulation
+- [ ] Color picker and drawing tools
+- [ ] User presence indicators
+- [ ] Drawing history and undo/redo
+- [ ] Export drawings (PNG, SVG)
+- [ ] Collaborative cursor positions
+- [ ] Room persistence and sharing
+- [ ] Docker deployment setup
+- [ ] Performance optimization
+
+## 🐛 Known Issues
+
+- [ ] WebSocket reconnection logic not implemented
+- [ ] No rate limiting on WebSocket messages
+- [ ] Database connection pooling needs optimization
+- [ ] Type definitions need cleanup in some areas
+
+## 📚 What I Learned
+
+This project pushed me way outside my comfort zone. Here are the biggest takeaways:
+
+1. **TypeScript is your friend**: Those red squiggly lines were frustrating at first, but they saved me from countless runtime errors.
+
+2. **Monorepos are powerful**: Once you understand turbo caching and shared packages, development speed increases dramatically.
+
+3. **WebSocket authentication is tricky**: You can't just slap a JWT in the connection. The HTTP upgrade handshake pattern is the way to go.
+
+4. **Security matters from day one**: Implementing XSS and CSRF protection early is much easier than retrofitting it later.
+
+5. **Real projects beat tutorials**: I learned more debugging WebSocket connections than I did from any course.
+
+## 🤝 Contributing
+
+This is primarily a learning project, but suggestions and feedback are welcome! Feel free to:
+- Open issues for bugs or questions
+- Submit PRs for improvements
+- Share your own learnings
+
+## 📝 License
+
+MIT License - feel free to use this for your own learning!
+
+## 🙏 Acknowledgments
+
+- Inspired by [Excalidraw](https://excalidraw.com/)
+- Built while learning from the developer community
+
+---
+
+**Note**: This is a work-in-progress learning project, not production-ready software. Use at your own risk!
+
+## 📧 Contact
+
+Feel free to reach out if you have questions or want to discuss real-time application architecture!
+
+- GitHub: [@sakshamVerma08](https://github.com/sakshamVerma08)
+- LinkedIn: [Your LinkedIn Profile]
+
+---
+
+⭐ If this project helps you learn, consider giving it a star!
