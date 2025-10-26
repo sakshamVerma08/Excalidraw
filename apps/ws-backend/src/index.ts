@@ -11,9 +11,16 @@ import express, { Request }  from "express";
 import * as cookie from "cookie";
 import jwt from "jsonwebtoken";
 import http, { IncomingMessage } from "http";
+import cors from "cors";
 
 /* Creating a common http server that handles ws handshakes, and during that , inside the http server, the jwt token is verified. */
 const app = express();
+// Using cors in HTTP server.
+
+app.use(cors({
+    origin: ["http://localhost:3000"/* Add the vercel deployment url as well*/],
+    credentials:true
+}));
 const httpServer = http.createServer(app);
 
 

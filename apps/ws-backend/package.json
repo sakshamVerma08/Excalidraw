@@ -10,9 +10,11 @@
     "dev:debug": "tsx watch --inspect src/index.ts"
   },
   "devDependencies": {
-    "@repo/typescript-config": "workspace:*",
-    "@excalidraw/types": "workspace:*",
     "@excalidraw/db": "workspace:*",
+    "@excalidraw/types": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
+    "@types/cors": "^2.8.19",
+    "cors": "^2.8.5",
     "tsx": "^4.20.6"
   },
   "keywords": [],
