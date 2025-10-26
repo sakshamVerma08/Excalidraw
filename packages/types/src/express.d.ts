@@ -3,7 +3,6 @@ import { JwtPayload } from "jsonwebtoken";
 
 declare global{
 
-
     namespace JWT{
 
         interface UserToken extends JwtPayload{

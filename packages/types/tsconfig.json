@@ -6,7 +6,9 @@
     "composite": true,
     // "baseUrl": ".",
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "allowImportingTsExtensions":true,
+    "emitDeclarationOnly":true
   },
   "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules"]

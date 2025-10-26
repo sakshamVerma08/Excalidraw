@@ -7,6 +7,8 @@ import express, {Express, Request, Response} from "express";
 import cookieParser from "cookie-parser";
 import router from "./routerMiddlewares/userRouter.js";
 import roomRouter from "./routerMiddlewares/roomRouter.js";
+import cors from "cors";
+
 const app: Express = express();
 const PORT = 4000;
 // Using application level middlewares.
@@ -14,6 +16,12 @@ const PORT = 4000;
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(cookieParser());
+
+app.use(cors({
+    origin: ["http://localhost:3000" /*Mention the Vercel frontend link here as well*/],
+
+    credentials:true
+}))
 
 // Using Router level middlewares
 

@@ -67,7 +67,7 @@ export const signUpController = async  (req: Request, res: Response)=>{
     res.cookie('token', token,{
         httpOnly:true,
         secure:true,
-        sameSite:'strict',
+        sameSite:process.env.NODE_ENV==="production"? "none": "lax"
         
     });
 

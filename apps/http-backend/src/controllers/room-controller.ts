@@ -92,3 +92,9 @@ export const createRoom = async (req: Request, res: Response)=>{
         return res.status(500).json({message:"Internal Server Error"});
     }
 }
+
+
+// export const joinRoom = async (req: Request, res: Response)=>{
+
+
+// }

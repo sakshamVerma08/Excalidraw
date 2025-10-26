@@ -6,7 +6,14 @@
         "name": "next"
       }
     ],
-    "incremental": true
+    "incremental": true,
+    "paths": {
+
+      "@excalidraw/types": ["../../packages/types/src/index.ts", "../../packages/types/src/schemas.ts"]
+    },
+    "typeRoots": [
+      "../../packages/types/src"
+    ]
   },
   "include": [
     "**/*.ts",
@@ -17,5 +24,7 @@
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
+
+  
 }

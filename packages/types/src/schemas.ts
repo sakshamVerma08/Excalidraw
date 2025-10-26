@@ -38,19 +38,24 @@ export const loginSchema = z.object({
 
 
   export  type Message = {
-         userId: number,
-         roomId: number,
+        user: Pick<User, "email"| "id" | "name" | "photo"> | undefined,
+         userId?: number,
+         roomId?: number,
          message: string,
-         created_at: Date,
+         created_at: Date | string,
      }
 
 
      export type User = {
-        id: string | undefined ,
+        id: number | undefined ,
         name: string,
         email: string,
         password:string,
+        photo: string | null,
     }
+
+
+export type RoomMessages = Array<Pick<Message, "user" | "message" | "created_at">>
 
 
 export type ChatTransactionResult = {
@@ -80,3 +85,4 @@ export const GetRoomsRouteParams = z.object({
   roomId: z.string("Room ID must be a in query params")
 
 })
+
