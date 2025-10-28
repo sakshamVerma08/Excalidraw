@@ -18,6 +18,7 @@ declare global{
         interface Request{
 
             user?: Pick<User,'id'| 'name' | 'email'>
+            roomId?: string
         }
 
        

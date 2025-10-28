@@ -9,13 +9,23 @@ export const useSocket = ()=>{
     useEffect(()=>{
         // WIP: Send the token here as well.
 
+        
         const ws = new WebSocket(`${WS_URL}`);
-
-
+        
         ws.onopen = ()=>{
             setLoading(false);
             setSocket(ws);
         }
+
+        ws.onerror = (error)=>{
+            console.error("Websocket error:", error);
+            setLoading(false);
+        }
+
+        return ()=>{
+            ws.close();
+        }
+
     },[]);
 
 

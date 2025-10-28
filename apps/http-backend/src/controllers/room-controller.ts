@@ -3,6 +3,33 @@ import { CreateRoomSchema, GetRoomsRouteParams } from "@excalidraw/types";
 import { Request, Response } from "express";
 import * as z from "zod";
 
+export const getRoomId = async (req: Request, res: Response) =>{
+
+    try{
+
+        const slug: string = req.params.slug!;
+
+        const roomId = await prisma.room.findUnique({
+            where:{
+                slug
+            },
+
+            select:{
+                id: true
+            }
+        });
+
+        if(!roomId) return res.status(404).json({message:"No room found with the provided Slug"});
+
+        return res.status(200).json(roomId);
+
+
+    }catch(err){
+        console.error(err);
+        return res.status(500).json({message:"internal server errror"});
+    }
+}
+
 export const getMessages = async (req:Request, res: Response)=>{
 
     

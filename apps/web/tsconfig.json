@@ -6,6 +6,8 @@
         "name": "next"
       }
     ],
+    "allowImportingTsExtensions": true,
+    "noEmit":true,
     "incremental": true,
     "paths": {
 

@@ -65,10 +65,10 @@ export const signUpController = async  (req: Request, res: Response)=>{
 
 
     res.cookie('token', token,{
-        httpOnly:true,
-        secure:true,
-        sameSite:process.env.NODE_ENV==="production"? "none": "lax"
-        
+        httpOnly: true,
+        path: '/',
+        secure: process.env.NODE_ENV === 'production'? true: false,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
     });
 
 
@@ -142,10 +142,11 @@ export const signInController = async(req: Request, res: Response)=>{
         expiresIn: '1d'
     });
 
-    res.cookie("token",token,{
-        httpOnly:true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
+    res.cookie("token", token, {
+        httpOnly: true,
+        path: '/',
+        secure: process.env.NODE_ENV === 'production'? true: false,
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
